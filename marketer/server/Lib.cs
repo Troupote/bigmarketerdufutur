@@ -6,9 +6,10 @@ public static partial class Module
     [Table(Name = "product", Public = true)]
     public partial class Product
     {
+        //public Identity Identity;
         [PrimaryKey]
-        public Identity Identity;
-        [AutoInc] public int Id;
+        [AutoInc]
+        public int Id;
         public string Name;
         public bool Sellable = false;
         public float Price = 0f;
@@ -16,8 +17,7 @@ public static partial class Module
     [Table(Name = "market")]
     public partial class Market
     {
-        [PrimaryKey]
-        public Identity Identity;
+        
         public string Identifiant;
         public string Name;
         public List<Product> Products;
@@ -60,13 +60,34 @@ public static partial class Module
     [Reducer]
     public static void InitializeProducts(ReducerContext ctx)
     {
+        //var guidd = Guid.NewGuid().ToByteArray()[0];
+        //var identityy = new Identity(guidd);
+
+        //Console.WriteLine(guidd);
+        //Console.WriteLine(guidd.ToString());
+        //Console.WriteLine(identityy);
+        //Console.WriteLine(identityy.ToString());
+
         ctx.Db.product.Insert(new Product
         {
-            Identity = ctx.Identity,
+            //Identity = identityy,
             Name = "Table",
             Price = 0f,
         });
     }
-    
-    
+
+    [Reducer]
+    public static void Populate(ReducerContext ctx, int quantity)
+    {
+        for (int i = 0; i < quantity; i++)
+        {
+            ctx.Db.product.Insert(new Product
+            {
+                Name = $"Product {i}",
+                Price = ctx.Rng.NextSingle(),
+                Sellable = i % 2 == 0
+            });
+        }
+    }
+
 }
